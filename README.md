@@ -1,101 +1,86 @@
-# AutoManager - Sistema de Gestão para Oficinas Automotivas
+# AutoBots - Gestão de Usuários, Vendas, Serviços e Mercadorias
 
-## Descrição
+## Estrutura e funcionalidades
 
-Sistema de gestão para oficinas automotivas com microserviços, autenticação JWT e controle completo de empresas, clientes, funcionários, vendas, mercadorias, serviços e veículos.
+O AutoBots é um sistema voltado para gerenciamento de usuários, vendas, serviços e mercadorias, com autenticação via JWT e controle de permissões por perfil.
 
----
+Funcionalidades principais:
 
-## Funcionalidades Principais
-
-Você constrói APIs para entregar as seguintes informações:
-
-* Lista de todos os **clientes cadastrados por empresa**, com documentos, telefones, endereços e demais dados completos.
-* Lista de todos os **funcionários cadastrados por empresa**, com documentos, perfil, telefones, endereços e outras informações associadas.
-* Lista de **serviços e mercadorias disponíveis para venda por empresa**, incluindo data de cadastro, nome, descrição, valor etc.
-* Lista de **todos os serviços ou peças vendidos por empresa** dentro de um intervalo de datas definido.
-* Lista de **todos os veículos atendidos por empresa**, com seus dados completos.
----
-
-## Segurança
-
-* Autenticação JWT
-* Perfis de acesso: ADMIN, GERENTE, VENDEDOR, CLIENTE
-* Proteção de rotas com Spring Security
-* Token expira em 10 minutos
+* CRUD completo de usuários, vendas, serviços e mercadorias.
+* Autenticação e autorização com **Json Web Token (JWT)**.
+* Perfis de usuários: Administrador, Gerente, Vendedor e Cliente.
+* Arquitetura seguindo princípios **SOLID**.
 
 ---
 
-## Tecnologias Utilizadas
+## 📝 Rotas disponíveis
 
-**Backend:** Java 17, Spring Boot 2.7, Spring Data JPA, Spring Security, HATEOAS
-**Banco:** MySQL 8 ou H2 em memória, Hibernate
-**Segurança:** JWT (JJWT), BCrypt
-**Ferramentas:** Maven, Lombok
-**Testes:** JUnit, Spring Boot Test
+### 🔓 AUTENTICAÇÃO (Público)
 
----
+* **POST** `http://localhost:8080/auth/login` - Fazer login
+* **GET** `http://localhost:8080/auth/me` - Verificar usuário autenticado
 
-## Como Executar
+### 👤 USUÁRIOS
 
-### Banco de Dados — MySQL
+* **GET** `http://localhost:8080/usuarios/listar` - Lista todos (filtrado por perfil)
+* **GET** `http://localhost:8080/usuarios/{id}` - Busca por ID
+* **POST** `http://localhost:8080/usuarios/cadastrar` - Criar
+* **PUT** `http://localhost:8080/usuarios/atualizar/{id}` - Atualizar
+* **DELETE** `http://localhost:8080/usuarios/excluir/{id}` - Excluir
 
-```sql
-DROP DATABASE IF EXISTS base;
-CREATE DATABASE base CHARACTER SET utf8mb4;
-```
+### 💰 VENDAS
 
-Configurar URL, usuário e senha no `application.properties`.
+* **GET** `http://localhost:8080/vendas` - Lista todas (filtrado por perfil)
+* **GET** `http://localhost:8080/vendas/{id}` - Busca por ID
+* **POST** `http://localhost:8080/vendas/cadastrar` - Criar
+* **PUT** `http://localhost:8080/vendas/atualizar` - Atualizar
+* **DELETE** `http://localhost:8080/vendas/deletar/{id}` - Excluir
 
-### Banco de Dados — H2
+### 🛠️ SERVIÇOS
 
-Usado por padrão. Console:
+* **GET** `http://localhost:8080/servicos/listar` - Lista todos
+* **GET** `http://localhost:8080/servicos/{id}` - Busca por ID
+* **POST** `http://localhost:8080/servicos/cadastrar` - Criar
+* **PUT** `http://localhost:8080/servicos/atualizar` - Atualizar
+* **DELETE** `http://localhost:8080/servicos/deletar/{id}` - Excluir
 
-```
-http://localhost:8080/h2-console
-jdbc:h2:mem:automanagerdb
-```
+### 📦 MERCADORIAS
 
-### Rodar os microserviços
-
-**Sistema (8081):**
-
-```
-cd sistema
-./mvnw spring-boot:run
-```
-
-**API (8080):**
-
-```
-cd api
-./mvnw spring-boot:run
-```
+* **GET** `http://localhost:8080/mercadorias/listar` - Lista todas
+* **GET** `http://localhost:8080/mercadorias/{id}` - Busca por ID
+* **POST** `http://localhost:8080/mercadorias/cadastrar` - Criar
+* **PUT** `http://localhost:8080/mercadorias/atualizar` - Atualizar
+* **DELETE** `http://localhost:8080/mercadorias/deletar/{id}` - Excluir
 
 ---
 
-## Autenticação
+## Exemplo de JSON para teste rápido - http://localhost:8080/usuarios/cadastrar
 
-### Login
-
-```http
-POST /login
+```json
 {
-  "nomeUsuario": "admin",
-  "senha": "123456"
+  "nome": "teste",
+  "credencial": {
+    "nomeUsuario": "teste",
+    "senha": "123456"
+  },
+  "perfis": ["ROLE_ADMIN"]
 }
 ```
 
-Header obrigatório para rotas protegidas:
-
-```
-Authorization: Bearer SEU_TOKEN
-```
 ---
 
-## Observações Importantes
+## Ambiente de Teste
 
-* Token expira em 10 minutos
-* Microserviço Sistema (8081) não usa JWT
-* MySQL exige criação prévia da base
-* H2 facilita testes rápidos
+* **Java:** 17
+* **Framework:** Spring Boot
+* **IDE:** Eclipse ou VS Code
+* **MySQL:** 8.0 
+
+⚠️ IMPORTANTE:
+Se o banco 'base' não existir, a aplicação não inicia. 
+Antes de rodar:
+1. Acesse o MySQL.
+2. Execute:
+   DROP DATABASE IF EXISTS base;
+   CREATE DATABASE base CHARACTER SET utf8mb4;
+3. Depois inicie a aplicação.
